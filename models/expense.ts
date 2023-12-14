@@ -1,20 +1,20 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
-interface IUserMap {
-  [phoneNumber: string]: number;
-}
+class TypedMap<V> extends Map<string, V> {}
 
 export interface IExpense extends Document {
   totalAmount: number;
   description: string;
   type: string;
-  userPaid: IUserMap;
-  userSpent: IUserMap;
+  userPaid: { [phone: string]: number };
+  userSpent: { [phone: string]: number };
   groupId: Types.ObjectId;
+  isSettlement: boolean;
   isGroupExpense: boolean;
   date: Date;
 }
 
+// Update expenseSchema
 const expenseSchema: Schema<IExpense> = new Schema(
   {
     totalAmount: {
@@ -33,15 +33,15 @@ const expenseSchema: Schema<IExpense> = new Schema(
       trim: true,
     },
     userPaid: {
-      type: Map,
+      type: Object, // Change to Object
+      required: true,
     },
     userSpent: {
-      type: Map,
-      // required: true,
+      type: Object, // Change to Object
+      required: true,
     },
     groupId: {
       type: mongoose.Schema.Types.ObjectId,
-      // required: true,
       ref: "Group",
     },
     isGroupExpense: {
@@ -51,6 +51,10 @@ const expenseSchema: Schema<IExpense> = new Schema(
     date: {
       type: Date,
       default: Date.now,
+    },
+    isSettlement: {
+      type: Boolean,
+      default: false,
     },
   },
   {
