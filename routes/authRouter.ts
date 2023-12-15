@@ -50,7 +50,7 @@ authRouter.post("/api/createAccount", async (req: Request, res: Response) => {
       });
     }
     await userDetail.save();
-    const token = jwt.sign({ id: userDetail._id }, "C0nt1Bi11");
+    const token = jwt.sign({ id: userDetail.phoneNumber }, "C0nt1Bi11");
     console.log(userDetail.name + "JWT TOKEN" + token);
     return res.json({ token, ...userDetail.toObject() });
   } catch (e) {
@@ -62,7 +62,7 @@ authRouter.post("/api/signin", async (req: Request, res: Response) => {
   const { token } = req.body;
   if (token == "YatharthDixit") {
     const admin = await User.findOne({ phoneNumber: "+918960685939" });
-    const token = jwt.sign({ id: admin?._id }, "C0nt1Bi11");
+    const token = jwt.sign({ id: admin?.phoneNumber }, "C0nt1Bi11");
     console.log("inside server if");
 
     return res.json({ token, ...admin?.toObject(), isRegistered: true });
@@ -72,16 +72,20 @@ authRouter.post("/api/signin", async (req: Request, res: Response) => {
 
   try {
     console.log("Inside signin try" + token);
-    // const userDetail = await getPhoneNumber(token);
-    const phoneNumber = "+918960685939";
-    // userDetail["phone_number"];
+    let userDetail = await getPhoneNumber(token);
+    if (userDetail == null)
+      return res.status(400).json({ msg: "Invalid Token" });
+
+    const phoneNumber =
+      //  "+918960685939";
+      userDetail!["phone_number"];
     console.log("after otpless" + phoneNumber);
 
     const existingUser = await User.findOne({ phoneNumber });
     // console.log("checked user " + existingUser._doc);
 
     if (existingUser && existingUser.didUserSigned) {
-      const token = jwt.sign({ id: existingUser._id }, "C0nt1Bi11");
+      const token = jwt.sign({ id: existingUser.phoneNumber }, "C0nt1Bi11");
       console.log("inside server if");
 
       return res.json({ token, ...existingUser, isRegistered: true });
@@ -107,7 +111,7 @@ authRouter.post("/TokenIsValid", async (req: Request, res: Response) => {
     console.log(2);
 
     if (!isVerified) return res.json(false);
-    const user = await User.findById(isVerified.id);
+    const user = await User.findOne({ phoneNumber: isVerified.id });
     // console.log(user._doc);
     if (!user) return res.json(false);
     console.log(user.toObject());
@@ -119,7 +123,9 @@ authRouter.post("/TokenIsValid", async (req: Request, res: Response) => {
 
 authRouter.get("/", authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const user = await User.findById(req.user);
+    const userPhone = req.user;
+    const user = await User.findOne({ phoneNumber: userPhone });
+    if (!user) return res.status(400).json({ msg: "User does not exist" });
     res.json({ ...user?.toObject(), token: req.token });
   } catch (e) {
     res.status(500).json({ error: e });

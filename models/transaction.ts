@@ -32,6 +32,7 @@ const transactionSchema: mongoose.Schema<ITransaction> = new mongoose.Schema({
 });
 
 // delete mongoose.models["Expense"];
+transactionSchema.index({ userGivenPhone: 1, userTakenPhone: 1 });
 
 const Transaction = mongoose.model<ITransaction>(
   "Transaction",
