@@ -520,19 +520,78 @@ expenseRouter.get(
   }
 );
 
+expenseRouter.post(
+  "/api/expense/get/",
+  authMiddleware,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const expenseId = req.body.expenseId; // Assuming you provide expenseId in the request body
+
+      // Check if expenseId is provided
+      if (!expenseId) {
+        return res.status(400).json({
+          message: "Expense ID is required in the request body",
+        });
+      }
+
+      // Find the expense by ID
+      const expense: IExpense | null = await Expense.findById(expenseId);
+
+      if (!expense) {
+        return res.status(404).json({
+          message: "Expense not found",
+        });
+      }
+
+      res.status(200).json(expense);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
+
+
+expenseRouter.post(
+  "/api/friend/expenses",
+  authMiddleware,
+  async (req: AuthRequest, res: Response) => {
+    // Validate request body
+    const userPhone = req.user;
+    const friendPhone = req.body.friendPhone; // Assuming you receive friendPhone in the request body
+
+    if (!userPhone || !friendPhone) {
+      return res
+        .status(400)
+        .json({ error: "Missing userPhone or friendPhone parameter" });
+    }
+
+    try {
+      const expenses = await Transaction.distinct("expense", {
+        $or: [
+          { userGivenPhone: userPhone, userTakenPhone: friendPhone },
+          { userGivenPhone: friendPhone, userTakenPhone: userPhone },
+        ],
+      });
+
+      res.json({ expenses });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+);
+
 expenseRouter.get(
   "/api/friends",
   authMiddleware, // Use your authentication middleware here
-  async (req : AuthRequest, res) => {
+  async (req: AuthRequest, res) => {
     try {
       const userPhone = req.user; // Assuming your middleware sets req.user to the user's phone
 
       // Find friends based on the conditions
       const friends = await Transaction.distinct("userTakenPhone", {
-        $or: [
-          { userGivenPhone: userPhone },
-          { userTakenPhone: userPhone },
-        ],
+        $or: [{ userGivenPhone: userPhone }, { userTakenPhone: userPhone }],
       });
 
       res.json({ friends });
