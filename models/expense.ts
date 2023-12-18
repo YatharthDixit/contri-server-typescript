@@ -11,7 +11,7 @@ export interface IExpense extends Document {
   groupId: Types.ObjectId;
   isSettlement: boolean;
   isGroupExpense: boolean;
-  date: Date;
+  // date: Date;
 }
 
 // Update expenseSchema
@@ -29,7 +29,7 @@ const expenseSchema: Schema<IExpense> = new Schema(
     },
     type: {
       type: String,
-      default: "other",
+      default: "Others",
       trim: true,
     },
     userPaid: {
@@ -48,10 +48,10 @@ const expenseSchema: Schema<IExpense> = new Schema(
       type: Boolean,
       default: false,
     },
-    date: {
-      type: Date,
-      default: Date.now,
-    },
+    // date: {
+    //   type: Date,
+    //   default: Date.now,
+    // },
     isSettlement: {
       type: Boolean,
       default: false,

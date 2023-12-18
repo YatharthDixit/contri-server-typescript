@@ -3,6 +3,7 @@ import Expense, { IExpense } from "../models/expense"; // Make sure to import yo
 import { authMiddleware, AuthRequest } from "../middlewares/authMiddleware";
 import Transaction, { ITransaction } from "../models/transaction";
 import { User } from "../models/user";
+import { addDays, isSameDay } from "date-fns";
 
 // async function calculateAndSaveTransactions(expense: IExpense) {
 //   try {
@@ -292,6 +293,88 @@ async function calculateAndSaveTransactions(expense: IExpense) {
 
 const expenseRouter = express.Router();
 
+// ---------------Streak -----------------
+expenseRouter.post(
+  "/api/expense/streak",
+  authMiddleware,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const userPhone = req.user; // Assuming userPhone is present in the request header
+      const { friendPhone } = req.body; // friendPhone is present in the request body
+
+      // Check if userPhone and friendPhone are provided
+      if (!userPhone || !friendPhone) {
+        return res
+          .status(400)
+          .json({ message: "userPhone and friendPhone are required" });
+      }
+
+      // Find transactions where userPhone and friendPhone are present in userGivenPhone or userTakenPhone
+      const transactions = await Transaction.aggregate([
+        {
+          $match: {
+            $or: [
+              { userGivenPhone: userPhone, userTakenPhone: friendPhone },
+              { userGivenPhone: friendPhone, userTakenPhone: userPhone },
+            ],
+          },
+        },
+        {
+          $sort: { createdAt: 1 },
+        },
+        {
+          $group: {
+            _id: {
+              userGivenPhone: "$userGivenPhone",
+              userTakenPhone: "$userTakenPhone",
+            },
+            dates: { $push: "$createdAt" },
+          },
+        },
+      ]);
+
+      let streak = 0;
+      let currentStreak = 1;
+      let previousDate = new Date(transactions[0]?.dates[0]);
+
+      for (let i = 1; i < transactions[0]?.dates.length; i++) {
+        const currentDate = new Date(transactions[0]?.dates[i]);
+        const diffInDays = Math.round(
+          (currentDate.getTime() - previousDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+
+        if (diffInDays === 1) {
+          currentStreak++;
+        } else if (diffInDays > 1) {
+          currentStreak = 1;
+        }
+
+        streak = Math.max(streak, currentStreak);
+        previousDate = currentDate;
+      }
+
+      // Check if the last date in the streak is today or yesterday
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+
+      if (
+        previousDate.getDate() !== today.getDate() &&
+        previousDate.getDate() !== yesterday.getDate()
+      ) {
+        streak = 0;
+      }
+
+      res.status(200).json({ streak });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
+// ---------------Streak -----------------
+
 expenseRouter.get(
   "/api/expense/",
   authMiddleware,
@@ -453,25 +536,130 @@ expenseRouter.post(
   }
 );
 
+// expenseRouter.get(
+//   "/api/balance/",
+//   authMiddleware,
+//   async (req: AuthRequest, res: Response) => {
+//     // Validate request body
+//     const userPhone = req.user;
+//     console.log("userPhone", userPhone);
+
+//     // const { friendPhone } = req.body;
+//     if (!userPhone) {
+//       return res.status(400).json({ error: "Missing friendPhone parameter" });
+//     }
+
+//     // Get user information from authMiddleware
+//     // const userPhone = req.user.phoneNumber;
+
+//     try {
+//       // const userA = await User.findOne({ phoneNumber: userPhone });
+//       // const userB = await User.findOne({ phoneNumber: friendPhone });
+//       const result = await Transaction.aggregate([
+//         {
+//           $match: {
+//             $or: [{ userGivenPhone: userPhone }, { userTakenPhone: userPhone }],
+//           },
+//         },
+//         {
+//           $project: {
+//             _id: null,
+//             inAmount: {
+//               $cond: {
+//                 if: { $eq: ["$userGivenPhone", userPhone] },
+//                 then: "$amount",
+//                 else: 0,
+//               },
+//             },
+//             outAmount: {
+//               $cond: {
+//                 if: { $eq: ["$userTakenPhone", userPhone] },
+//                 then: "$amount",
+//                 else: 0,
+//               },
+//             },
+//           },
+//         },
+//         {
+//           $group: {
+//             _id: null,
+//             incomingAmount: { $sum: "$inAmount" },
+//             outgoingAmount: { $sum: "$outAmount" },
+//           },
+//         },
+//       ]);
+
+//       const summary =
+//         result.length > 0
+//           ? result[0]
+//           : { incomingAmount: 0, outgoingAmount: 0 };
+
+//       res.json({ summary });
+//       console.log(res);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: "Internal Server Error" });
+//     }
+//   }
+// );
+// expenseRouter.get(
+//   "/api/balances",
+//   authMiddleware,
+//   async (req: AuthRequest, res: Response) => {
+//     try {
+//       const userPhone = req.user;
+
+//       const result = await Transaction.aggregate([
+//         {
+//           $match: {
+//             $or: [{ userGivenPhone: userPhone }, { userTakenPhone: userPhone }],
+//           },
+//         },
+//         {
+//           $project: {
+//             _id: null,
+//             friendPhone: {
+//               $cond: {
+//                 if: { $eq: ["$userGivenPhone", userPhone] },
+//                 then: "$userTakenPhone",
+//                 else: "$userGivenPhone",
+//               },
+//             },
+//             amount: {
+//               $cond: {
+//                 if: { $eq: ["$userGivenPhone", userPhone] },
+//                 then: "$amount",
+//                 else: { $multiply: [-1, "$amount"] },
+//               },
+//             },
+//           },
+//         },
+//         {
+//           $group: {
+//             _id: null,
+//             incoming: { $sum: { $max: [0, "$amount"] } },
+//             outgoing: { $sum: { $max: [0, { $multiply: ["$amount", -1] }] } },
+//           },
+//         },
+//       ]);
+
+//       const balance =
+//         result.length > 0 ? result[0] : { incoming: 0, outgoing: 0 };
+
+//       res.json(balance);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: "Internal Server Error" });
+//     }
+//   }
+// );
 expenseRouter.get(
-  "/api/balance/",
+  "/api/balance",
   authMiddleware,
   async (req: AuthRequest, res: Response) => {
-    // Validate request body
-    const userPhone = req.user;
-    console.log("userPhone", userPhone);
-
-    // const { friendPhone } = req.body;
-    if (!userPhone) {
-      return res.status(400).json({ error: "Missing friendPhone parameter" });
-    }
-
-    // Get user information from authMiddleware
-    // const userPhone = req.user.phoneNumber;
-
     try {
-      // const userA = await User.findOne({ phoneNumber: userPhone });
-      // const userB = await User.findOne({ phoneNumber: friendPhone });
+      const userPhone = req.user;
+
       const result = await Transaction.aggregate([
         {
           $match: {
@@ -481,38 +669,45 @@ expenseRouter.get(
         {
           $project: {
             _id: null,
-            inAmount: {
+            friendPhone: {
+              $cond: {
+                if: { $eq: ["$userGivenPhone", userPhone] },
+                then: "$userTakenPhone",
+                else: "$userGivenPhone",
+              },
+            },
+            amount: {
               $cond: {
                 if: { $eq: ["$userGivenPhone", userPhone] },
                 then: "$amount",
-                else: 0,
-              },
-            },
-            outAmount: {
-              $cond: {
-                if: { $eq: ["$userTakenPhone", userPhone] },
-                then: "$amount",
-                else: 0,
+                else: { $multiply: [-1, "$amount"] },
               },
             },
           },
         },
         {
           $group: {
+            _id: "$friendPhone",
+            totalSum: { $sum: "$amount" },
+          },
+        },
+        {
+          $group: {
             _id: null,
-            incomingAmount: { $sum: "$inAmount" },
-            outgoingAmount: { $sum: "$outAmount" },
+            incomingAmount: { $sum: { $max: [0, "$totalSum"] } },
+            outgoingAmount: {
+              $sum: { $max: [0, { $multiply: ["$totalSum", -1] }] },
+            },
           },
         },
       ]);
 
-      const summary =
+      const balance =
         result.length > 0
           ? result[0]
           : { incomingAmount: 0, outgoingAmount: 0 };
 
-      res.json({ summary });
-      console.log(res);
+      res.json(balance);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });
@@ -550,7 +745,6 @@ expenseRouter.post(
     }
   }
 );
-
 
 expenseRouter.post(
   "/api/friend/expenses",
@@ -590,17 +784,65 @@ expenseRouter.get(
       const userPhone = req.user; // Assuming your middleware sets req.user to the user's phone
 
       // Find friends based on the conditions
-      const friends = await Transaction.distinct("userTakenPhone", {
-        $or: [{ userGivenPhone: userPhone }, { userTakenPhone: userPhone }],
-      });
+      const friends = await Transaction.aggregate([
+        {
+          $match: {
+            $or: [{ userGivenPhone: userPhone }, { userTakenPhone: userPhone }],
+          },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+        {
+          $group: {
+            _id: {
+              $cond: [
+                { $eq: ["$userGivenPhone", userPhone] },
+                "$userTakenPhone",
+                "$userGivenPhone",
+              ],
+            },
+            latestTransaction: { $first: "$createdAt" },
+          },
+        },
+        {
+          $sort: { latestTransaction: -1 },
+        },
+        {
+          $group: {
+            _id: null,
+            friends: { $push: "$_id" },
+          },
+        },
+      ]);
 
-      res.json({ friends });
+      res.json({ friends: friends[0]?.friends || [] });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
 );
+// // --- old without sort
+// expenseRouter.get(
+//   "/api/friends",
+//   authMiddleware, // Use your authentication middleware here
+//   async (req: AuthRequest, res) => {
+//     try {
+//       const userPhone = req.user; // Assuming your middleware sets req.user to the user's phone
+
+//       // Find friends based on the conditions
+//       const friends = await Transaction.distinct("userTakenPhone", {
+//         $or: [{ userGivenPhone: userPhone }, { userTakenPhone: userPhone }],
+//       });
+
+//       res.json({ friends });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: "Internal Server Error" });
+//     }
+//   }
+// );
 
 expenseRouter.post(
   "/api/expense/create",
