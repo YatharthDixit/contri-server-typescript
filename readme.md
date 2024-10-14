@@ -1,51 +1,80 @@
 
-# Contri (Backend)
 
-## Project Description
+# Contri - Expense Splitting App
 
-This repository contains the backend code for Contri, a bill splitting app designed to simplify expense sharing with friends and family. This new version of the backend is built with Node.js, Express.js, and MongoDB (using Mongoose) for robust performance and scalability. It utilizes JWT for secure authentication and is written entirely in TypeScript for improved code maintainability.
-
-**Frontend Repository:** [https://github.com/yatharthdixit/contri-new](https://github.com/yatharthdixit/contri-new)
+Contri is a beautifully designed mobile application built with Flutter that simplifies the way you track and split expenses with friends and family.
 
 ## Features
 
-*   **Universal Bill Splitting:** Split bills with anyone, regardless of whether they are registered on the app.
-*   **Historical Data:** Access and view all past bills split by others once you sign up.
-*   **Unlimited Participants:** Add any number of people to a bill.
-*   **Flexible Splitting:** Split expenses equally or customize the split based on individual contributions.
-*   **Personal Tracking:** Keep track of all bills shared with a specific person.
-*   **Secure Authentication:** JWT (JSON Web Tokens) are used for secure user authentication.
-*   **Detailed Transaction Records:** Transactions are meticulously tracked, providing a clear record of who owes whom and how much.
-*   **Balance Calculation:** Easily determine the outstanding balance with a specific friend.
-*   **Streak Calculation:** Track the consecutive days of transactions with a friend, adding a fun element to shared expenses.
+* **Effortless Authentication:**
+    * Secure and user-friendly OTPless phone number-based authentication.
+    * Create personalized user profiles with names and optional profile pictures.
+* **Seamless Contact Integration:**
+    * Easily split expenses with your existing contacts, eliminating the need for manual entry.
+* **Flexible Expense Management:**
+    * Add expenses with detailed descriptions, amounts, categories, and participants.
+    * Split expenses equally among participants or define custom amounts for each person.
+    * Categorize expenses into various types (e.g., groceries, travel, food) with unique icons and colors for quick identification.
+* **Intuitive Friend Management:**
+    * View a list of friends and track balances owed to or by each friend, keeping your finances organized.
+    * Access a detailed history of expenses shared with each friend for transparent expense tracking.
+* **Comprehensive Balance Tracking:**
+    * Maintain a clear overview of your overall balance, showing the net amount you owe or are owed.
+    * View individual balances with each friend for a granular understanding of your financial interactions.
+* **Informative Home Screen Dashboard:**
+    * The home screen provides a quick snapshot of your recent expenses, friend list, and an overall balance summary for easy access to essential information.
+* **Smooth Navigation:**
+    * Effortlessly navigate between different sections of the app with an intuitive and visually appealing animated bottom navigation bar.
 
-## APIs
+## Screenshots
 
-The API endpoints are documented below. You can also import the Postman collection given as **Contri.postman_collection.json** to explore and test the API functionality.
+| ![Screenshot 1](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/1.png) | ![Screenshot 2](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/2.png) | ![Screenshot 3](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/3.png) |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| ![Screenshot 4](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/4.png) | ![Screenshot 5](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/5.png) | ![Screenshot 6](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/6.png) |
+| ![Screenshot 7](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/7.png) | ![Screenshot 8](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/8.png) | ![Screenshot 9](https://github.com/YatharthDixit/contri-new/blob/main/Screenshots/9.png) |
 
-**Postman Collection:** 
+## Backend Repository
 
-|Endpoint|Method|Description|Authentication Required|
-|:---|:---|:---|:---|
-|/api/createAccount|POST|Create a new user account|No|
-|/api/signin|POST|Sign in using OTPless token|No|
-|/|GET|Get current user details|Yes|
-|/api/expense/create|POST|Create a new expense|Yes|
-|/api/balance/friend|POST|Check balance with a friend|Yes|
-|/api/expense/|GET|Get all expenses for the current user|Yes|
-|/api/balance|GET|Check overall balance for the current user|Yes|
-|/api/friends|GET|Get a list of friends|Yes|
-|/api/friend/expenses|POST|Get expenses with a specific friend|Yes|
-|/api/expense/get|POST|Get a specific expense by ID|Yes|
+The backend for this application is located in a separate repository: [https://github.com/YatharthDixit/contri-server-typescript](https://github.com/YatharthDixit/contri-server-typescript)
 
 ## Installation
 
-1.  Clone the repository: `git clone` [https://github.com/YatharthDixit/contri-server-typescript](https://github.com/YatharthDixit/contri-server-typescript)
-2.  Install dependencies: `npm install`
-3.  Set up environment variables: Create a `.env` file based on the `.env.example` file and populate it with your MongoDB connection string and any other sensitive information.
-4.  Run the application: `npm start`
+1. **Prerequisites:** Ensure you have Flutter and its dependencies installed. You can find the installation guide on the official Flutter website: [https://docs.flutter.dev/get-started/install](https://docs.flutter.dev/get-started/install)
+2. **Clone the repository:**
+```bash
+git clone git@github.com:YatharthDixit/contri-new.git
+
+```
+
+3.  **Install dependencies:**
+
+<!-- end list -->
+
+Bash
+
+```
+flutter pub get
+
+```
+
+4.  **Set up Backend:**
+    -   Clone the backend repository from [https://github.com/YatharthDixit/contri-server-typescript](https://github.com/YatharthDixit/contri-server-typescript) and follow setup instructions in its README.
+5.  **Configure environment variables:**
+    
+    -   Create a `.env` file in the root directory of your project.
+    -   Add your API keys and other necessary configuration values to this file.
+    
+7.  **Run the app:**
+
+<!-- end list -->
+
+Bash
+
+```
+flutter run
+
+```
 
 ## Contributing
 
-Feel free to submit pull requests or raise issues if you encounter any bugs or have suggestions for improvements.
-
+Contributions are welcome! If you encounter any bugs, have suggestions for improvements, or would like to add new features, please feel free to open an issue or submit a pull request.
