@@ -1,0 +1,374 @@
+{
+	"info": {
+		"_postman_id": "9ebee376-f814-4856-a276-17bc91c49a21",
+		"name": "Contri",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28164999"
+	},
+	"item": [
+		{
+			"name": "getCurrentUser",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTI1NDF9.Q8S3qmGb7SkGUkQhniqU_4fXrZbTU_MsRj4Oby58Zlk",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createExpense",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NzMzODlkMWZjZWExMjcwZDIyNzYzZSIsImlhdCI6MTcwMjA1MDIxMH0.lgmBQKBlZQg4DKrmBpj4huHKPMloY87Hq5DDodN1Slk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"totalAmount\" : 100,\n        \"description\" : \"Hello\",\n        \"type\" : \"Groceries\",\n        \n        \"userPaid\" : {\n          \"+918960685939\" :100,\n          \"+917417048840\": 0\n        },\n        \"userSpent\" : {\n          \"+918960685939\" : 0,\n          \"+917417048840\" : 100\n        }\n        \n        \n        \n       \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/expense/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"expense",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkBalance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"friendPhone\"   : \"+917417\"\n    // \"friendPhone\" : \"+918960\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/balance/friend",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"balance",
+						"friend"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"token\" : \"YatharthDixit\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUserExpense",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/expense/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"expense",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkInOutBalance",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/balance",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getFriends",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/friends",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"friends"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getFriends Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/friends",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"friends"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get friend expense",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"friendPhone\" :  \"+917417\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/friend/expenses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"friend",
+						"expenses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getExpense",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTg5NjA2ODU5MzkiLCJpYXQiOjE3MDI1OTMwMzZ9.gL5J0oLrWp6wkN0L1RACYkLB4yKY_WwS9EEKUriGrS4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"expenseId\" : \"657bb2994dfd4e53b57c617c\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/expense/get",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"expense",
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createAccount",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"name\" : \"Mayank\",\n        \"phoneNumber\" : \"+917007970836\",\n        \"didUserSigned\": true,\n        \"photoURL\" : \"https://pbs.twimg.com/profile_images/1731345620240359424/EkI9CNNJ_400x400.jpg\"\n      }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/createAccount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"createAccount"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "inherit"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
